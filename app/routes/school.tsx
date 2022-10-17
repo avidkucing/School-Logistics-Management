@@ -4,12 +4,12 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
-import { getNoteListItems } from "~/models/note.server";
+import { getSchoolListItems } from "~/models/school.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
-  const noteListItems = await getNoteListItems({ userId });
-  return json({ noteListItems });
+  const schoolListItems = await getSchoolListItems({ userId });
+  return json({ schoolListItems });
 }
 
 export default function NotesPage() {
@@ -41,19 +41,19 @@ export default function NotesPage() {
 
           <hr />
 
-          {data.noteListItems.length === 0 ? (
+          {data.schoolListItems.length === 0 ? (
             <p className="p-4">Belum ada sekolah</p>
           ) : (
             <ol>
-              {data.noteListItems.map((note) => (
-                <li key={note.id}>
+              {data.schoolListItems.map((school) => (
+                <li key={school.id}>
                   <NavLink
                     className={({ isActive }) =>
                       `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                     }
-                    to={note.id}
+                    to={school.id}
                   >
-                    📝 {note.title}
+                  {school.name}
                   </NavLink>
                 </li>
               ))}

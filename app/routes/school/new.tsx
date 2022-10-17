@@ -1,12 +1,15 @@
 import type { ActionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import * as React from "react";
 
-import { createNote } from "~/models/note.server";
+import { createSchool } from "~/models/school.server";
 import { requireUserId } from "~/session.server";
+import type { FormType } from "~/types";
+import { getFormData } from "~/utils";
 
-const forms = [
+const forms: FormType[] = [
+  { name: "name", type: "text", required: true, label: "Nama Sekolah" },
   { name: "head_name", type: "text", required: true, label: "Nama Kepala Sekolah" },
   { name: "head_no", type: "text", required: true, label: "NIP Kepala Sekolah" },
   { name: "staff_name", type: "text", required: true, label: "Nama Bendahara" },
@@ -21,26 +24,33 @@ export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
-  const title = formData.get("title");
-  const body = formData.get("body");
+  const { values, error } = getFormData(forms, formData);
 
-  if (typeof title !== "string" || title.length === 0) {
-    return json(
-      { errors: { title: "Title is required", body: null } },
-      { status: 400 }
-    );
-  }
+  if (error) return error;
+  const { name,
+    head_name,
+    head_no,
+    staff_name,
+    staff_no,
+    manager_name,
+    team_name,
+    team_no,
+    address } = values;
 
-  if (typeof body !== "string" || body.length === 0) {
-    return json(
-      { errors: { title: null, body: "Body is required" } },
-      { status: 400 }
-    );
-  }
+  const school = await createSchool({
+    name,
+    head_name,
+    head_no,
+    staff_name,
+    staff_no,
+    manager_name,
+    team_name,
+    team_no,
+    address,
+    userId
+  });
 
-  const note = await createNote({ title, body, userId });
-
-  return redirect(`/notes/${note.id}`);
+  return redirect(`/school/${school.id}`);
 }
 
 export default function NewNotePage() {
@@ -83,7 +93,7 @@ export default function NewNotePage() {
               {actionData.errors.title}
             </div>
           )}
-        </div> : <div>
+        </div> : <div key={el.name}>
           <label className="flex w-full flex-col gap-1">
             <span>{el.label}: </span>
             <textarea

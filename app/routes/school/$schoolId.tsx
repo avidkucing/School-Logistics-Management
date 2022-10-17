@@ -3,36 +3,48 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { deleteNote, getNote } from "~/models/note.server";
+import { deleteSchool, getSchool } from "~/models/school.server";
 import { requireUserId } from "~/session.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
-  invariant(params.noteId, "noteId not found");
+  invariant(params.schoolId, "schoolId not found");
 
-  const note = await getNote({ userId, id: params.noteId });
-  if (!note) {
+  const school = await getSchool({ userId, id: params.schoolId });
+  if (!school) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json({ note });
+  return json({ school });
 }
 
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
-  invariant(params.noteId, "noteId not found");
+  invariant(params.schoolId, "schoolId not found");
 
-  await deleteNote({ userId, id: params.noteId });
+  await deleteSchool({ userId, id: params.schoolId });
 
   return redirect("/notes");
 }
+
+const labels = [
+  "head_name",
+  "head_no",
+  "staff_name",
+  "staff_no",
+  "manager_name",
+  "team_name",
+  "team_no",
+  "address",
+]
 
 export default function NoteDetailsPage() {
   const data = useLoaderData<typeof loader>();
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">{data.note.title}</h3>
-      <p className="py-6">{data.note.body}</p>
+      <h3 className="text-2xl font-bold">{data.school.name}</h3>
+      {Object.values(data.school).map((value, id) => 
+        labels.includes(value) && <p key={id} className="py-6">{value}</p>)}
       <hr className="my-4" />
       <Form method="post">
         <button

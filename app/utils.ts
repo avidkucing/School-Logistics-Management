@@ -1,7 +1,9 @@
+import { json } from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
+import type { FormType } from "./types";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -68,4 +70,26 @@ export function useUser(): User {
 
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
+}
+
+export function getFormData(forms: FormType[], data: FormData) {
+  let values: {[x: string]: string} = {};
+  let error;
+  
+  for (const form of forms) {
+    if (!form.required) break;
+
+    let value = data.get(form.name);
+    if (typeof value !== "string" || value.length === 0 || value == null) {
+      error = json(
+        { errors: { [form.name]: `${form.label} perlu diisi` } },
+        { status: 400 }
+      );
+      break;
+    } else {
+      values[form.name] = value;
+    }
+  }
+
+  return {values, error};
 }
