@@ -23,7 +23,7 @@ export async function action({ request, params }: ActionArgs) {
 
   await deleteSchool({ userId, id: params.schoolId });
 
-  return redirect("/notes");
+  return redirect("/school");
 }
 
 const labels = [
