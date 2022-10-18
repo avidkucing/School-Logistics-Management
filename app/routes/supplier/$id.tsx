@@ -5,12 +5,13 @@ import invariant from "tiny-invariant";
 
 import { deleteSchool, getSchool } from "~/models/school.server";
 import { requireUserId } from "~/session.server";
+import { forms } from "./new";
 
 export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
-  invariant(params.schoolId, "schoolId not found");
+  invariant(params.id, "id not found");
 
-  const school = await getSchool({ userId, id: params.schoolId });
+  const school = await getSchool({ userId, id: params.id });
   if (!school) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -19,32 +20,23 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
-  invariant(params.schoolId, "schoolId not found");
+  invariant(params.id, "id not found");
 
-  await deleteSchool({ userId, id: params.schoolId });
+  await deleteSchool({ userId, id: params.id });
 
   return redirect("/school");
 }
-
-const labels = [
-  "head_name",
-  "head_no",
-  "staff_name",
-  "staff_no",
-  "manager_name",
-  "team_name",
-  "team_no",
-  "address",
-]
 
 export default function NoteDetailsPage() {
   const data = useLoaderData<typeof loader>();
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">{data.school.name}</h3>
-      {Object.values(data.school).map((value, id) => 
-        labels.includes(value) && <p key={id} className="py-6">{value}</p>)}
+      <h3 className="text-2xl font-bold pb-2">{data.school.name}</h3>
+      {
+        forms.map(form => <p key={form.name} className="pt-2">
+          {form.label}: {data.school[form.name]}
+      </p>)}
       <hr className="my-4" />
       <Form method="post">
         <button

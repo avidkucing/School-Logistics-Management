@@ -8,7 +8,7 @@ import { requireUserId } from "~/session.server";
 import type { FormType } from "~/types";
 import { getFormData } from "~/utils";
 
-const forms: FormType[] = [
+export const forms: FormType[] = [
   { name: "name", type: "text", required: true, label: "Nama Sekolah" },
   { name: "head_name", type: "text", required: true, label: "Nama Kepala Sekolah" },
   { name: "head_no", type: "text", required: true, label: "NIP Kepala Sekolah" },

@@ -14,9 +14,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password Password?
-  notes    Note[]
-  schools School[]
+  password  Password?
+  notes     Note[]
+  schools   School[]
+  suppliers Supplier[]
 }
 
 model Password {
@@ -39,20 +40,92 @@ model Note {
 }
 
 model School {
-  id    String @id @default(cuid())
-  name String
-  head_name String
-  head_no String
-  staff_name String
-  staff_no String
+  id           String @id @default(cuid())
+  name         String
+  head_name    String
+  head_no      String
+  staff_name   String
+  staff_no     String
   manager_name String
-  team_name String
-  team_no String
-  address String
+  team_name    String
+  team_no      String
+  address      String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+}
+
+model Supplier {
+  id          String @id @default(cuid())
+  name        String
+  npwp        String
+  address     String
+  phone       String
+  leader_name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model Transaction {
+  id         String @id @default(cuid())
+  type       String
+  code       String @unique
+  name       String
+  date       String
+  date_start String
+  date_end   String
+  spk_no     String
+  spk_date   String
+  bap_no     String
+  bap_date   String
+  bast_no    String
+  bast_date  String
+  spp_no     String
+  spp_date   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  details Detail[]
+
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  supplierId String
+}
+
+model Detail {
+  id         String @id @default(cuid())
+  detail     String
+  amount     String
+  unit       String
+  unit_price String
+  total      String
+  spec       String
+  notes      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  details DetailDetail[]
+
+  transation   Transaction @relation(fields: [transationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  transationId String
+}
+
+model DetailDetail {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  detail   Detail @relation(fields: [detailId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  detailId String
 }
