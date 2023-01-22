@@ -3,13 +3,13 @@ import { json } from "@remix-run/node";
 import { Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
-import { getSchoolListItems } from "~/models/school.server";
 import HeaderNav from "~/components/header_nav";
+import { getSupplierListItems } from "~/models/supplier.server";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
-  const schoolListItems = await getSchoolListItems({ userId });
-  return json({ schoolListItems });
+  const supplierListItems = await getSupplierListItems({ userId });
+  return json({ supplierListItems });
 }
 
 export default function NotesPage() {
@@ -27,19 +27,19 @@ export default function NotesPage() {
 
           <hr />
 
-          {data.schoolListItems.length === 0 ? (
+          {data.supplierListItems.length === 0 ? (
             <p className="p-4">Belum ada penyedia</p>
           ) : (
             <ol>
-              {data.schoolListItems.map((school) => (
-                <li key={school.id}>
+              {data.supplierListItems.map((supplier) => (
+                <li key={supplier.id}>
                   <NavLink
                     className={({ isActive }) =>
                       `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                     }
-                    to={school.id}
+                    to={supplier.id}
                   >
-                    {school.name}
+                    {supplier.name}
                   </NavLink>
                 </li>
               ))}

@@ -3,21 +3,17 @@ import { redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import * as React from "react";
 
-import { createSchool } from "~/models/school.server";
+import { createSupplier } from "~/models/supplier.server";
 import { requireUserId } from "~/session.server";
 import type { FormType } from "~/types";
 import { getFormData } from "~/utils";
 
 export const forms: FormType[] = [
-  { name: "name", type: "text", required: true, label: "Nama Sekolah" },
-  { name: "head_name", type: "text", required: true, label: "Nama Kepala Sekolah" },
-  { name: "head_no", type: "text", required: true, label: "NIP Kepala Sekolah" },
-  { name: "staff_name", type: "text", required: true, label: "Nama Bendahara" },
-  { name: "staff_no", type: "text", required: true, label: "NIP Bendahara" },
-  { name: "manager_name", type: "text", required: true, label: "Nama Pengelola Barang" },
-  { name: "team_name", type: "text", required: true, label: "Nama Tim BOS" },
-  { name: "team_no", type: "text", required: true, label: "NIP Tim Bos" },
-  { name: "address", type: "textarea", required: true, label: "Alamat Sekolah" },
+  { name: "name", type: "text", required: true, label: "Nama Penyedia" },
+  { name: "leader_name", type: "text", required: true, label: "Nama Pimpinan" },
+  { name: "npwp", type: "text", required: true, label: "NPWP" },
+  { name: "phone", type: "text", required: true, label: "No Telepon" },
+  { name: "address", type: "textarea", required: true, label: "Alamat" },
 ]
 
 export async function action({ request }: ActionArgs) {
@@ -28,29 +24,21 @@ export async function action({ request }: ActionArgs) {
 
   if (error) return error;
   const { name,
-    head_name,
-    head_no,
-    staff_name,
-    staff_no,
-    manager_name,
-    team_name,
-    team_no,
+    leader_name,
+    npwp,
+    phone,
     address } = values;
 
-  const school = await createSchool({
+  const supplier = await createSupplier({
     name,
-    head_name,
-    head_no,
-    staff_name,
-    staff_no,
-    manager_name,
-    team_name,
-    team_no,
+    leader_name,
+    npwp,
+    phone,
     address,
     userId
   });
 
-  return redirect(`/school/${school.id}`);
+  return redirect(`/supplier/${supplier.id}`);
 }
 
 export default function NewNotePage() {

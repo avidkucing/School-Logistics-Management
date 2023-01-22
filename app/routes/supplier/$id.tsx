@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
-import { deleteSchool, getSchool } from "~/models/school.server";
+import { deleteSupplier, getSupplier } from "~/models/supplier.server";
 import { requireUserId } from "~/session.server";
 import { forms } from "./new";
 
@@ -11,20 +11,20 @@ export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
   invariant(params.id, "id not found");
 
-  const school = await getSchool({ userId, id: params.id });
-  if (!school) {
+  const supplier = await getSupplier({ userId, id: params.id });
+  if (!supplier) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json({ school });
+  return json({ supplier });
 }
 
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
   invariant(params.id, "id not found");
 
-  await deleteSchool({ userId, id: params.id });
+  await deleteSupplier({ userId, id: params.id });
 
-  return redirect("/school");
+  return redirect("/supplier");
 }
 
 export default function NoteDetailsPage() {
@@ -32,10 +32,10 @@ export default function NoteDetailsPage() {
 
   return (
     <div>
-      <h3 className="text-2xl font-bold pb-2">{data.school.name}</h3>
+      <h3 className="text-2xl font-bold pb-2">{data.supplier.name}</h3>
       {
         forms.map(form => <p key={form.name} className="pt-2">
-          {form.label}: {data.school[form.name]}
+          {form.label}: {data.supplier[form.name]}
       </p>)}
       <hr className="my-4" />
       <Form method="post">

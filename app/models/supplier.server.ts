@@ -25,37 +25,25 @@ export function getSupplierListItems({ userId }: { userId: User["id"] }) {
 
 export function createSupplier({
   name,
-  head_name,
-  head_no,
-  staff_name,
-  staff_no,
-  manager_name,
-  team_name,
-  team_no,
+  leader_name,
+  npwp,
+  phone,
   address,
   userId,
 }: Pick<Supplier,
   "name" |
-  "head_name" |
-  "head_no" |
-  "staff_name" |
-  "staff_no" |
-  "manager_name" |
-  "team_name" |
-  "team_no" |
+  "leader_name" |
+  "npwp" |
+  "phone" |
   "address"> & {
     userId: User["id"];
   }) {
   return prisma.supplier.create({
     data: {
       name,
-      head_name,
-      head_no,
-      staff_name,
-      staff_no,
-      manager_name,
-      team_name,
-      team_no,
+      leader_name,
+      npwp,
+      phone,
       address,
       user: {
         connect: {
