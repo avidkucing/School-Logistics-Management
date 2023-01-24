@@ -1,57 +1,17 @@
-import type { ActionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
-import * as React from "react";
-
-import { createSupplier } from "~/models/supplier.server";
-import { requireUserId } from "~/session.server";
+import { Form } from "@remix-run/react";
 import type { FormType } from "~/types";
-import { getFormData } from "~/utils";
 
-export const forms: FormType[] = [
-  { name: "name", type: "text", required: true, label: "Nama Penyedia" },
-  { name: "leader_name", type: "text", required: true, label: "Nama Pimpinan" },
-  { name: "npwp", type: "text", required: true, label: "NPWP" },
-  { name: "phone", type: "text", required: true, label: "No Telepon" },
-  { name: "address", type: "textarea", required: true, label: "Alamat" },
-]
-
-export async function action({ request }: ActionArgs) {
-  const userId = await requireUserId(request);
-
-  const formData = await request.formData();
-  const { values, error } = getFormData(forms, formData);
-
-  if (error) return error;
-  const { name,
-    leader_name,
-    npwp,
-    phone,
-    address } = values;
-
-  const supplier = await createSupplier({
-    name,
-    leader_name,
-    npwp,
-    phone,
-    address,
-    userId
-  });
-
-  return redirect(`/supplier/${supplier.id}`);
-}
-
-export default function NewNotePage() {
-  const actionData = useActionData<typeof action>();
-  const topRef = React.useRef<HTMLInputElement>(null);
-  const bodyRef = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    if (actionData?.errors) {
-      topRef.current?.focus();
-    };
-  }, [actionData]);
-
+export default function CustomForm({
+  forms,
+  actionData,
+  topRef,
+  bodyRef,
+}: {
+  forms: FormType[],
+  actionData: any,
+  topRef: React.RefObject<any>,
+  bodyRef: React.RefObject<any>,
+}) {
   return (
     <Form
       method="post"

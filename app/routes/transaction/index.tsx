@@ -3,9 +3,9 @@ import { Link } from "@remix-run/react";
 export default function NoteIndexPage() {
   return (
     <p>
-      No note selected. Select a note on the left, or{" "}
+      Belum ada transaksi terpilih. Pilih transaksi di samping, atau{" "}
       <Link to="new" className="text-blue-500 underline">
-        create a new note.
+        tambah transaksi baru.
       </Link>
     </p>
   );

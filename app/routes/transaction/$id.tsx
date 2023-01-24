@@ -8,9 +8,9 @@ import { requireUserId } from "~/session.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   const userId = await requireUserId(request);
-  invariant(params.noteId, "noteId not found");
+  invariant(params.id, "id not found");
 
-  const note = await getNote({ userId, id: params.noteId });
+  const note = await getNote({ userId, id: params.id });
   if (!note) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -19,9 +19,9 @@ export async function loader({ request, params }: LoaderArgs) {
 
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
-  invariant(params.noteId, "noteId not found");
+  invariant(params.id, "id not found");
 
-  await deleteNote({ userId, id: params.noteId });
+  await deleteNote({ userId, id: params.id });
 
   return redirect("/notes");
 }
@@ -39,7 +39,7 @@ export default function NoteDetailsPage() {
           type="submit"
           className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
         >
-          Delete
+          Hapus
         </button>
       </Form>
     </div>
