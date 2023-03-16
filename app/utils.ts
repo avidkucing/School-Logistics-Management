@@ -1,3 +1,4 @@
+import type { TypedResponse } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
@@ -74,12 +75,24 @@ export function validateEmail(email: unknown): email is string {
 
 export function getFormData(forms: FormType[], data: FormData) {
   let values: {[x: string]: string} = {};
-  let error;
+  let error: TypedResponse<{errors: { [x: string]: string }, status: number }> | undefined;
   
   for (const form of forms) {
-    if (!form.required) break;
+    if (!form.required) continue;
+
+    if (form.type == 'date_range' && form.options) {
+      const {values: _values, error: _error} = getFormData(form.options, data);
+      console.log('avid', _values, _error)
+      if (_error) {
+        error = _error;
+        break;
+      }
+      values = {...values, ..._values};
+      continue;
+    }
 
     let value = data.get(form.name);
+    console.log('avid2', form.name, value)
     if (typeof value !== "string" || value.length === 0 || value == null) {
       error = json(
         { errors: { [form.name]: `${form.label} perlu diisi` } },

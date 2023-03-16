@@ -3,5 +3,5 @@ export interface FormType {
     type: string;
     required: boolean;
     label: string;
-    options?: {[x: string]: string}[];
+    options?: FormType[];
 }

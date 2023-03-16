@@ -1,17 +1,24 @@
 import { Form } from "@remix-run/react";
 import type { FormType } from "~/types";
 
+
 export default function CustomForm({
   forms,
   actionData,
-  topRef,
-  bodyRef,
+  ref,
 }: {
   forms: FormType[],
   actionData: any,
-  topRef: React.RefObject<any>,
-  bodyRef: React.RefObject<any>,
+  ref: React.RefObject<any>,
 }) {
+  function generateErrors(name: string) {
+    return actionData?.errors[name] && (
+      <div className="pt-1 text-red-700" id="title-error">
+        {actionData.errors[name]}
+      </div>
+    )
+  }
+
   return (
     <Form
       method="post"
@@ -22,44 +29,99 @@ export default function CustomForm({
         width: "100%",
       }}
     >
-      {forms.map(el => el.type === 'text' ?
+      {forms.map(el =>
         <div key={el.name}>
-          <label className="flex w-full flex-col gap-1">
-            <span>{el.label}: </span>
-            <input
-              ref={topRef}
-              name={el.name}
-              className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-              aria-invalid={actionData?.errors?.title ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.title ? "title-error" : undefined
-              }
-            />
-          </label>
-          {actionData?.errors?.title && (
-            <div className="pt-1 text-red-700" id="title-error">
-              {actionData.errors.title}
-            </div>
-          )}
-        </div> : <div key={el.name}>
-          <label className="flex w-full flex-col gap-1">
-            <span>{el.label}: </span>
-            <textarea
-              ref={bodyRef}
-              name={el.name}
-              rows={8}
-              className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
-              aria-invalid={actionData?.errors?.body ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.body ? "body-error" : undefined
-              }
-            />
-          </label>
-          {actionData?.errors?.body && (
-            <div className="pt-1 text-red-700" id="body-error">
-              {actionData.errors.body}
-            </div>
-          )}
+          {el.type === 'text' ?
+            <label className="flex w-full flex-col gap-1">
+              <span>{el.label}: </span>
+              <input
+                ref={ref}
+                name={el.name}
+                className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                aria-invalid={actionData?.errors[el.name] ? true : undefined}
+                aria-errormessage={
+                  actionData?.errors[el.name] ? "title-error" : undefined
+                }
+              />
+            </label>
+            : el.type === 'date' ?
+              <label className="flex w-full flex-col gap-1">
+                <span>{el.label}: </span>
+                <input
+                  ref={ref}
+                  type="date"
+                  name={el.name}
+                  className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                  aria-invalid={actionData?.errors[el.name] ? true : undefined}
+                  aria-errormessage={
+                    actionData?.errors[el.name] ? "title-error" : undefined
+                  }
+                />
+              </label>
+              : el.type === 'date_range' ?
+                <div className="flex w-full flex-col gap-1">
+                  <span>{el.label}: </span>
+                  <div className="flex w-full flex-row gap-1">
+                    <label className="flex w-full flex-col gap-1">
+                      <span>{el.options ? el.options[0].label : ''}: </span>
+                      <input
+                        ref={ref}
+                        type="date"
+                        name={el.options ? el.options[0].name : ''}
+                        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                        aria-invalid={actionData?.errors[el.name] ? true : undefined}
+                        aria-errormessage={
+                          actionData?.errors[el.name] ? "title-error" : undefined
+                        }
+                      />
+                    </label>
+                    <label className="flex w-full flex-col gap-1">
+                      <span>{el.options ? el.options[1].label : ''}: </span>
+                      <input
+                        ref={ref}
+                        type="date"
+                        name={el.options ? el.options[1].name : ''}
+                        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                        aria-invalid={actionData?.errors[el.name] ? true : undefined}
+                        aria-errormessage={
+                          actionData?.errors[el.name] ? "title-error" : undefined
+                        }
+                      />
+                    </label>
+                  </div>
+                </div>
+                : el.type === 'select' ?
+                  <label className="flex w-full flex-col gap-1">
+                    <span>{el.label}: </span>
+                    <select
+                      ref={ref}
+                      name={el.name}
+                      className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                      aria-invalid={actionData?.errors[el.name] ? true : undefined}
+                      aria-errormessage={
+                        actionData?.errors[el.name] ? "title-error" : undefined
+                      }
+                    >
+                      <option value="">--Pilih--</option>
+                      {el.options?.map((option, index) => (
+                        <option key={index} value={option.name}>{option.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  : <label className="flex w-full flex-col gap-1">
+                    <span>{el.label}: </span>
+                    <textarea
+                      ref={ref}
+                      name={el.name}
+                      rows={8}
+                      className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
+                      aria-invalid={actionData?.errors[el.name] ? true : undefined}
+                      aria-errormessage={
+                        actionData?.errors[el.name] ? "body-error" : undefined
+                      }
+                    />
+                  </label>}
+          {generateErrors(el.name)}
         </div>
       )}
 
