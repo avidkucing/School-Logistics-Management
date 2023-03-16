@@ -1,13 +1,16 @@
-import type { ActionArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
+import invariant from "tiny-invariant";
 import CustomForm from "~/components/custom_form";
+import { getSupplierListItems } from "~/models/supplier.server";
 
 import { createTransaction } from "~/models/transaction.server";
 import { requireUserId } from "~/session.server";
 import type { FormType } from "~/types";
-import { getFormData } from "~/utils";
+import { getFormData, injectOptions } from "~/utils";
 
 const typeOptions: FormType[] = [
   { name: "barang", type: "barang", required: true, label: "Barang" },
@@ -23,7 +26,7 @@ const forms: FormType[] = [
   { name: "type", type: "select", required: true, label: "Tipe", options: typeOptions },
   { name: "code", type: "text", required: true, label: "Kode Rekening" },
   { name: "name", type: "text", required: true, label: "Nama Belanja" },
-  { name: "supplierId", type: "text", required: true, label: "Nama CV/Penyedia" },
+  { name: "supplierId", type: "select", required: true, label: "Nama CV/Penyedia" },
   { name: "date", type: "date", required: true, label: "Tanggal Transaksi" },
   { name: "date_range", type: "date_range", required: true, label: "Waktu Pelaksanaan", options: dateRange },
   { name: "spk_no", type: "text", required: true, label: "No SPK" },
@@ -35,6 +38,18 @@ const forms: FormType[] = [
   { name: "spp_no", type: "text", required: true, label: "No SPP" },
   { name: "spp_date", type: "date", required: true, label: "Tanggal SPP" },
 ]
+
+export async function loader({ request, params }: LoaderArgs) {
+  const userId = await requireUserId(request);
+
+  const suppliers = await getSupplierListItems({ userId });
+  if (!suppliers) {
+    throw new Response("Not Found", { status: 404 });
+  }
+
+  console.log(suppliers)
+  return json({ suppliers });
+}
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
@@ -63,7 +78,7 @@ export async function action({ request }: ActionArgs) {
     spp_date, 
   } = values;
 
-  const supplier = await createTransaction({
+  const transaction = await createTransaction({
     type,
     code,
     name,
@@ -82,12 +97,20 @@ export async function action({ request }: ActionArgs) {
     userId
   });
 
-  return redirect(`/supplier/${supplier.id}`);
+  return redirect(`/transaction/${transaction.id}`);
 }
 
 export default function NewNotePage() {
+  const data = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const ref = React.useRef<HTMLElement>(null);
+
+  const suppliers: FormType[] = data.suppliers.map((supplier) => ({
+    name: supplier.id,
+    type: "text",
+    required: true,
+    label: supplier.name,
+  }));
 
   React.useEffect(() => {
     if (actionData?.errors) {
@@ -96,6 +119,6 @@ export default function NewNotePage() {
   }, [actionData]);
 
   return (
-    <CustomForm forms={forms} actionData={actionData} ref={ref} />
+    <CustomForm forms={injectOptions(forms, 'supplierId', suppliers)} actionData={actionData} ref={ref} />
   );
 }

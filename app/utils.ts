@@ -82,7 +82,6 @@ export function getFormData(forms: FormType[], data: FormData) {
 
     if (form.type == 'date_range' && form.options) {
       const {values: _values, error: _error} = getFormData(form.options, data);
-      console.log('avid', _values, _error)
       if (_error) {
         error = _error;
         break;
@@ -92,7 +91,6 @@ export function getFormData(forms: FormType[], data: FormData) {
     }
 
     let value = data.get(form.name);
-    console.log('avid2', form.name, value)
     if (typeof value !== "string" || value.length === 0 || value == null) {
       error = json(
         { errors: { [form.name]: `${form.label} perlu diisi` } },
@@ -105,4 +103,13 @@ export function getFormData(forms: FormType[], data: FormData) {
   }
 
   return {values, error};
+}
+
+export function injectOptions(forms: FormType[], input_name: string, options: FormType[]) {
+  return forms.map(form => {
+    if (form.name === input_name) {
+      return {...form, options};
+    }
+    return form;
+  });
 }
