@@ -1,7 +1,8 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import { useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
+import Detail from "~/components/detail";
 
 import { deleteSupplier, getSupplier } from "~/models/supplier.server";
 import { requireUserId } from "~/session.server";
@@ -31,22 +32,7 @@ export default function NoteDetailsPage() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div>
-      <h3 className="text-2xl font-bold pb-2">{data.supplier.name}</h3>
-      {
-        forms.map(form => <p key={form.name} className="pt-2">
-          {form.label}: {data.supplier[form.name]}
-      </p>)}
-      <hr className="my-4" />
-      <Form method="post">
-        <button
-          type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
-        >
-          Hapus
-        </button>
-      </Form>
-    </div>
+    <Detail data={data} forms={forms} type='supplier' />
   );
 }
 

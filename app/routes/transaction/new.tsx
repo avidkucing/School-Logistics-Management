@@ -3,7 +3,6 @@ import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 import * as React from "react";
-import invariant from "tiny-invariant";
 import CustomForm from "~/components/custom_form";
 import { getSupplierListItems } from "~/models/supplier.server";
 
@@ -22,7 +21,7 @@ const dateRange = [
   { name: "date_end", type: "date_end", required: true, label: "Sampai" },
 ]
 
-const forms: FormType[] = [
+export const forms: FormType[] = [
   { name: "type", type: "select", required: true, label: "Tipe", options: typeOptions },
   { name: "code", type: "text", required: true, label: "Kode Rekening" },
   { name: "name", type: "text", required: true, label: "Nama Belanja" },
