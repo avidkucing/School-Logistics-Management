@@ -14,9 +14,9 @@ export default function Index() {
     {
       id: 'transaction', title: "Transaksi"
     },
-    {
-      id: 'detail', title: "Detail Belanja"
-    },
+    // {
+    //   id: 'detail', title: "Detail Belanja"
+    // },
     {
       id: 'tax', title: "Pajak Belanja"
     },

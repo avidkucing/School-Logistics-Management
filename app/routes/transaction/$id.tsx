@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Detail from "~/components/detail";
 
@@ -25,14 +25,27 @@ export async function action({ request, params }: ActionArgs) {
 
   await deleteTransaction({ userId, id: params.id });
 
-  return redirect("/notes");
+  return redirect("/transaction");
 }
 
 export default function NoteDetailsPage() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <Detail data={data} forms={forms} type='transaction' titleKey="code" />
+    <>
+      <Detail data={data} forms={forms} type='transaction' titleKey="code" />
+      <h3 className="text-2xl font-bold pb-2">Detail Transaksi</h3>
+      <div>
+        <Form action={"/detail?trx=" + data.transaction.id} >
+          <button
+            type="submit"
+            className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          >
+            Tambah
+          </button>
+        </Form>
+      </div>
+    </>
   );
 }
 

@@ -107,7 +107,7 @@ model Transaction {
 
 model Detail {
   id         String @id @default(cuid())
-  detail     String
+  name       String
   amount     String
   unit       String
   unit_price String
@@ -120,8 +120,8 @@ model Detail {
 
   details DetailDetail[]
 
-  transation   Transaction @relation(fields: [transationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  transationId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  transactionId String
 }
 
 model DetailDetail {
