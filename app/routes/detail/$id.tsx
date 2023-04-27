@@ -1,37 +1,45 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import { useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import Detail from "~/components/detail";
 
-import { deleteNote, getNote } from "~/models/note.server";
-import { requireUserId } from "~/session.server";
+import { deleteDetail, getDetail } from "~/models/detail.server";
+import { forms } from "./new";
 
 export async function loader({ request, params }: LoaderArgs) {
-  const userId = await requireUserId(request);
-  invariant(params.noteId, "noteId not found");
+  invariant(params.id, "id not found");
+  
+  const url = new URL(request.url)
+  const transactionId = url.searchParams.get('trx') 
+  invariant(transactionId, "transactionId not found");
 
-  const note = await getNote({ userId, id: params.noteId });
-  if (!note) {
+  const detail = await getDetail({ transactionId, id: params.id });
+  if (!detail) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json({ note });
+  return json({ detail });
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const userId = await requireUserId(request);
-  invariant(params.noteId, "noteId not found");
+  invariant(params.id, "id not found");
+  
+  const url = new URL(request.url)
+  const transactionId = url.searchParams.get('trx') 
+  invariant(transactionId, "transactionId not found");
 
-  await deleteNote({ userId, id: params.noteId });
+  await deleteDetail({ transactionId, id: params.id });
 
-  return redirect("/notes");
+  return redirect("/detail?trx=" + transactionId);
 }
 
 export default function NoteDetailsPage() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <Detail data={data} forms={[]} type='detail' titleKey="name" />
+    <>
+      <Detail data={data} forms={forms} type='detail' titleKey="code" />
+    </>
   );
 }
 

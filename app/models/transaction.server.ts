@@ -18,7 +18,7 @@ export function getTransaction({
 export function getTransactionListItems({ userId }: { userId: User["id"] }) {
   return prisma.transaction.findMany({
     where: { userId },
-    select: { id: true, name: true },
+    select: { id: true, code: true, name: true },
     orderBy: { updatedAt: "desc" },
   });
 }

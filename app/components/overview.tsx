@@ -2,7 +2,7 @@ import { Link, NavLink, Outlet } from "@remix-run/react";
 
 import HeaderNav from "~/components/header_nav";
 
-export function Overview({data, title}: {
+export function Overview({data, title, extraParams}: {
   data: {
     listItems: {
       id: string
@@ -10,6 +10,7 @@ export function Overview({data, title}: {
     }[]
   },
   title: string,
+  extraParams?: string,
 }) {
   const title_lower = title.toLowerCase()
 
@@ -29,15 +30,15 @@ export function Overview({data, title}: {
             <p className="p-4">Belum ada {title_lower}</p>
           ) : (
             <ol>
-              {data.listItems.map((transaction) => (
-                <li key={transaction.id}>
+              {data.listItems.map((data) => (
+                <li key={data.id}>
                   <NavLink
                     className={({ isActive }) =>
                       `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                     }
-                    to={transaction.id}
+                    to={data.id + (extraParams ? extraParams : "")}
                   >
-                    {transaction.name}
+                    {data.name}
                   </NavLink>
                 </li>
               ))}
