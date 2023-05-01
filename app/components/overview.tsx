@@ -2,7 +2,7 @@ import { Link, NavLink, Outlet } from "@remix-run/react";
 
 import HeaderNav from "~/components/header_nav";
 
-export function Overview({data, title, extraParams}: {
+export function Overview({data, title, extraParams = ''}: {
   data: {
     listItems: {
       id: string
@@ -10,7 +10,7 @@ export function Overview({data, title, extraParams}: {
     }[]
   },
   title: string,
-  extraParams?: string,
+  extraParams: string,
 }) {
   const title_lower = title.toLowerCase()
 
@@ -20,7 +20,7 @@ export function Overview({data, title, extraParams}: {
 
       <main className="flex h-full bg-white">
         <div className="h-full w-80 border-r bg-gray-50">
-          <Link to="new" className="block p-4 text-xl text-blue-500">
+          <Link to={"new" + extraParams} className="block p-4 text-xl text-blue-500">
             + Tambah {title}
           </Link>
 
@@ -36,7 +36,7 @@ export function Overview({data, title, extraParams}: {
                     className={({ isActive }) =>
                       `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
                     }
-                    to={data.id + (extraParams ? extraParams : "")}
+                    to={data.id + extraParams}
                   >
                     {data.name}
                   </NavLink>

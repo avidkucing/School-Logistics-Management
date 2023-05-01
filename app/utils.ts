@@ -113,3 +113,12 @@ export function injectOptions(forms: FormType[], input_name: string, options: Fo
     return form;
   });
 }
+
+export function injectValue(forms: FormType[], input_name: string, value: string) {
+  return forms.map(form => {
+    if (form.name === input_name) {
+      return {...form, value};
+    }
+    return form;
+  });
+}

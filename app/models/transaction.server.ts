@@ -97,3 +97,12 @@ export function deleteTransaction({
     where: { id, userId },
   });
 }
+
+export function getTransactionCode({
+  id
+}: Pick<Transaction, "id">) {
+  return prisma.transaction.findFirst({
+    where: { id },
+    select: { code: true },
+  });
+}

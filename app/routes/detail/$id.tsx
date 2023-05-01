@@ -6,6 +6,7 @@ import Detail from "~/components/detail";
 
 import { deleteDetail, getDetail } from "~/models/detail.server";
 import { forms } from "./new";
+import { getTransactionCode } from "~/models/transaction.server";
 
 export async function loader({ request, params }: LoaderArgs) {
   invariant(params.id, "id not found");
@@ -18,7 +19,13 @@ export async function loader({ request, params }: LoaderArgs) {
   if (!detail) {
     throw new Response("Not Found", { status: 404 });
   }
-  return json({ detail });
+
+  const transaction = await getTransactionCode({ id: transactionId });
+
+  return json({ detail: {
+    ...detail,
+    code: transaction?.code,
+  } });
 }
 
 export async function action({ request, params }: ActionArgs) {

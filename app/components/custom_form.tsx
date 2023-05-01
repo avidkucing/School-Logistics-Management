@@ -29,19 +29,23 @@ export default function CustomForm({
         width: "100%",
       }}
     >
-      {forms.map(el =>
-        <div key={el.name}>
+      {forms.map(el => {
+        const inputClass = "flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose" + (!el.disabled ? "" : " bg-gray-200")
+
+        return <div key={el.name}>
           {el.type === 'text' ?
             <label className="flex w-full flex-col gap-1">
               <span>{el.label}: </span>
               <input
                 ref={ref}
                 name={el.name}
-                className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                className={inputClass}
                 aria-invalid={actionData?.errors[el.name] ? true : undefined}
                 aria-errormessage={
                   actionData?.errors[el.name] ? "title-error" : undefined
                 }
+                defaultValue={el.value}
+                readOnly={el.disabled}
               />
             </label>
             : el.type === 'date' ?
@@ -51,11 +55,13 @@ export default function CustomForm({
                   ref={ref}
                   type="date"
                   name={el.name}
-                  className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                  className={inputClass}
                   aria-invalid={actionData?.errors[el.name] ? true : undefined}
                   aria-errormessage={
                     actionData?.errors[el.name] ? "title-error" : undefined
                   }
+                  defaultValue={el.value}
+                  disabled={el.disabled}
                 />
               </label>
               : el.type === 'date_range' ?
@@ -68,11 +74,13 @@ export default function CustomForm({
                         ref={ref}
                         type="date"
                         name={el.options ? el.options[0].name : ''}
-                        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                        className={inputClass}
                         aria-invalid={actionData?.errors[el.name] ? true : undefined}
                         aria-errormessage={
                           actionData?.errors[el.name] ? "title-error" : undefined
                         }
+                        defaultValue={el.value}
+                        readOnly={el.disabled}
                       />
                     </label>
                     <label className="flex w-full flex-col gap-1">
@@ -81,11 +89,13 @@ export default function CustomForm({
                         ref={ref}
                         type="date"
                         name={el.options ? el.options[1].name : ''}
-                        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                        className={inputClass}
                         aria-invalid={actionData?.errors[el.name] ? true : undefined}
                         aria-errormessage={
                           actionData?.errors[el.name] ? "title-error" : undefined
                         }
+                        defaultValue={el.value}
+                        readOnly={el.disabled}
                       />
                     </label>
                   </div>
@@ -96,11 +106,12 @@ export default function CustomForm({
                     <select
                       ref={ref}
                       name={el.name}
-                      className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+                      className={inputClass}
                       aria-invalid={actionData?.errors[el.name] ? true : undefined}
                       aria-errormessage={
                         actionData?.errors[el.name] ? "title-error" : undefined
                       }
+                      defaultValue={el.value}
                     >
                       <option value="">--Pilih--</option>
                       {el.options?.map((option, index) => (
@@ -114,16 +125,18 @@ export default function CustomForm({
                       ref={ref}
                       name={el.name}
                       rows={8}
-                      className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
+                      className={"w-full " + inputClass}
                       aria-invalid={actionData?.errors[el.name] ? true : undefined}
                       aria-errormessage={
                         actionData?.errors[el.name] ? "body-error" : undefined
                       }
+                      defaultValue={el.value}
+                      readOnly={el.disabled}
                     />
                   </label>}
           {generateErrors(el.name)}
         </div>
-      )}
+      })}
 
       <div className="text-right">
         <button

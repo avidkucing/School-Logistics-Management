@@ -1,4 +1,4 @@
-import { Form, Link } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 
 import { useUser } from "~/utils";
 
@@ -8,7 +8,7 @@ export default function HeaderNav({title}: {title: string}) {
   return (
       <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
         <h1 className="text-3xl font-bold">
-          <Link to=".">{title}</Link>
+          <p>{title}</p>
         </h1>
         <p>{user.email}</p>
         <div className="flex flex-row">
