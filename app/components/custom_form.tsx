@@ -6,10 +6,12 @@ export default function CustomForm({
   forms,
   actionData,
   ref,
+  buttonLabel = 'Simpan',
 }: {
   forms: FormType[],
   actionData: any,
   ref: React.RefObject<any>,
+  buttonLabel?: string,
 }) {
   function generateErrors(name: string) {
     return actionData?.errors[name] && (
@@ -27,6 +29,7 @@ export default function CustomForm({
         flexDirection: "column",
         gap: 8,
         width: "100%",
+        padding: 16,
       }}
     >
       {forms.map(el => {
@@ -35,7 +38,7 @@ export default function CustomForm({
         return <div key={el.name}>
           {el.type === 'text' ?
             <label className="flex w-full flex-col gap-1">
-              <span>{el.label}: </span>
+              <span>{el.label}</span>
               <input
                 ref={ref}
                 name={el.name}
@@ -50,7 +53,7 @@ export default function CustomForm({
             </label>
             : el.type === 'date' ?
               <label className="flex w-full flex-col gap-1">
-                <span>{el.label}: </span>
+                <span>{el.label}</span>
                 <input
                   ref={ref}
                   type="date"
@@ -66,10 +69,10 @@ export default function CustomForm({
               </label>
               : el.type === 'date_range' ?
                 <div className="flex w-full flex-col gap-1">
-                  <span>{el.label}: </span>
+                  <span>{el.label}</span>
                   <div className="flex w-full flex-row gap-1">
                     <label className="flex w-full flex-col gap-1">
-                      <span>{el.options ? el.options[0].label : ''}: </span>
+                      <span>{el.options ? el.options[0].label : ''}</span>
                       <input
                         ref={ref}
                         type="date"
@@ -84,7 +87,7 @@ export default function CustomForm({
                       />
                     </label>
                     <label className="flex w-full flex-col gap-1">
-                      <span>{el.options ? el.options[1].label : ''}: </span>
+                      <span>{el.options ? el.options[1].label : ''}</span>
                       <input
                         ref={ref}
                         type="date"
@@ -102,7 +105,7 @@ export default function CustomForm({
                 </div>
                 : el.type === 'select' ?
                   <label className="flex w-full flex-col gap-1">
-                    <span>{el.label}: </span>
+                    <span>{el.label}</span>
                     <select
                       ref={ref}
                       name={el.name}
@@ -120,7 +123,7 @@ export default function CustomForm({
                     </select>
                   </label>
                   : <label className="flex w-full flex-col gap-1">
-                    <span>{el.label}: </span>
+                    <span>{el.label}</span>
                     <textarea
                       ref={ref}
                       name={el.name}
@@ -138,12 +141,12 @@ export default function CustomForm({
         </div>
       })}
 
-      <div className="text-right">
+      <div className="text-center p-4">
         <button
           type="submit"
           className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
         >
-          Simpan
+          {buttonLabel}
         </button>
       </div>
     </Form>

@@ -36,7 +36,7 @@ export default function NoteDetailsPage() {
       <Detail data={data} forms={forms} type='transaction' titleKey="code" />
       <h3 className="text-2xl font-bold pb-2">Detail Transaksi</h3>
       <div>
-        <Form action={"/detail?trx=" + data.transaction.id} >
+        <Form action={"/detail?trx=" + data.transaction.id}>
           <button
             type="submit"
             className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
@@ -44,6 +44,19 @@ export default function NoteDetailsPage() {
             Lihat
           </button>
         </Form>
+        <div className="mt-8"></div>
+        <h3 className="text-2xl font-bold pb-2">Pajak Belanja</h3>
+        <div>
+          <Form action="/wip">
+          {/* <Form action={"/tax?trx=" + data.transaction.id}> */}
+            <button
+              type="submit"
+              className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            >
+              Lihat
+            </button>
+          </Form>
+        </div>
       </div>
     </>
   );

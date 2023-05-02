@@ -18,9 +18,17 @@ export default function Detail({
       <div className="flex">
         <div className="flex-1">
           {
-            forms.map(form => <p key={form.name} className="pt-2">
-              {form.label}: {data[type][form.name]}
-            </p>)}
+            forms.map(form =>
+              form.type === 'date_range' ?
+                form.options?.map(el =>
+                  <p key={el.name} className="pt-2">
+                    {el.label}: {data[type][el.name]}
+                  </p>
+                )
+                :
+                <p key={form.name} className="pt-2">
+                  {form.label}: {data[type][form.name]}
+                </p>)}
         </div>
         <div>
           <Form method="post">

@@ -1,4 +1,32 @@
 import { Link } from "@remix-run/react";
+import * as fs from "fs";
+import {
+  ExternalHyperlink,
+  HeadingLevel,
+  ImageRun,
+  Paragraph,
+  patchDocument,
+  PatchType,
+  Table,
+  TableCell,
+  TableRow,
+  TextDirection,
+  TextRun,
+  VerticalAlign,
+} from "docx";
+
+export async function loader() {
+  await patchDocument(fs.readFileSync("docs/SPK-test.docx"), {
+    patches: {
+    }
+  }).then((doc) => {
+    fs.writeFileSync("public/test.docx", doc);
+  });
+
+  return {
+    message: "Hello World!",
+  };
+}
 
 export default function Index() {
   const dataInput = [
@@ -9,19 +37,19 @@ export default function Index() {
       id: 'supplier', title: "Data Penyedia"
     },
     {
-      id: 'transaction', title: "Data Transaksi"
-    },
-    {
-      id: 'tax', title: "Pajak Belanja"
+      id: 'transaction', title: "Transaksi & Pajak"
     },
   ];
 
   const dataReport = [
+    // {
+    //   id: 'print', title: "Cetak SPJ"
+    // },
+    // {
+    //   id: 'docs', title: "Buat Rekap"
+    // },
     {
-      id: 'print', title: "Cetak SPJ"
-    },
-    {
-      id: 'docs', title: "Buat Rekap"
+      id: 'spk', title: "Cetak SPK"
     },
   ]
 
@@ -60,7 +88,7 @@ export default function Index() {
           <div className="mt-16"></div>
           <h2 className="text-center text-2xl font-extrabold tracking-tight sm:text-2xl lg:text-2xl">
             <span className="block drop-shadow-md">
-              Buat Laporan
+              Cetak Laporan
             </span>
           </h2>
           <div className="mt-6 flex flex-wrap justify-center gap-8">

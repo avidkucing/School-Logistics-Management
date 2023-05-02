@@ -1,11 +1,13 @@
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 
 export default function NoteIndexPage() {
+  let params = useLocation().search;
+
   return (
     <p>
-      No note selected. Select a note on the left, or{" "}
-      <Link to="new" className="text-blue-500 underline">
-        create a new note.
+      Belum ada detail transaksi terpilih. Pilih detail transaksi di samping, atau{" "}
+      <Link to={"new" + params} className="text-blue-500 underline">
+        tambah detail transaksi baru.
       </Link>
     </p>
   );

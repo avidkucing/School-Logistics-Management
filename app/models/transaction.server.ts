@@ -38,6 +38,7 @@ export function createTransaction({
   bast_date,
   spp_no,
   spp_date,
+  duration,
   supplierId,
   userId,
 }: Pick<Transaction,
@@ -54,7 +55,8 @@ export function createTransaction({
   "bast_no" |
   "bast_date" |
   "spp_no" |
-  "spp_date"> & {
+  "spp_date" |
+  "duration"> & {
     supplierId: Supplier["id"];
   } & {
     userId: User["id"];
@@ -75,6 +77,7 @@ export function createTransaction({
       bast_date,
       spp_no,
       spp_date,
+      duration,
       supplier: {
         connect: {
           id: supplierId,

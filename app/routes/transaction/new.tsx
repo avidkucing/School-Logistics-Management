@@ -27,7 +27,8 @@ export const forms: FormType[] = [
   { name: "name", type: "text", required: true, label: "Nama Belanja" },
   { name: "supplierId", type: "select", required: true, label: "Nama CV/Penyedia" },
   { name: "date", type: "date", required: true, label: "Tanggal Transaksi" },
-  { name: "date_range", type: "date_range", required: true, label: "Waktu Pelaksanaan", options: dateRange },
+  { name: "duration", type: "text", required: true, label: "Waktu Pelaksanaan (hari)" },
+  { name: "date_range", type: "date_range", required: true, label: "", options: dateRange },
   { name: "spk_no", type: "text", required: true, label: "No SPK" },
   { name: "spk_date", type: "date", required: true, label: "Tanggal SPK" },
   { name: "bap_no", type: "text", required: true, label: "No BAP" },
@@ -75,6 +76,7 @@ export async function action({ request }: ActionArgs) {
     bast_date,
     spp_no,
     spp_date, 
+    duration,
   } = values;
 
   const transaction = await createTransaction({
@@ -93,6 +95,7 @@ export async function action({ request }: ActionArgs) {
     bast_date,
     spp_no,
     spp_date,
+    duration,
     userId
   });
 
