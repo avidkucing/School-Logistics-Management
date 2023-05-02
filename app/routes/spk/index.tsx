@@ -16,7 +16,7 @@ import {
   TextRun,
   patchDocument,
 } from "docx";
-import { getDetailListItems } from "~/models/detail.server";
+import { getDetailListItems, getDetails } from "~/models/detail.server";
 
 export const forms: FormType[] = [
   { name: "transactionId", type: "select", required: true, label: "Pilih Transaksi" },
@@ -48,7 +48,7 @@ export async function action({ request }: ActionArgs) {
   console.log(values, error)
 
   if (error) return error;
-  const { 
+  const {
     transactionId,
     schoolId,
   } = values;
@@ -63,17 +63,36 @@ export async function action({ request }: ActionArgs) {
     throw new Response("school not found", { status: 404 });
   }
 
-  const details = await getDetailListItems({ transactionId });
+  const details = await getDetails({ transactionId });
   if (!details) {
     throw new Response("details not found", { status: 404 });
   }
 
-  const detailsDocs = new Array(20).map((_, index) => ({
-    [`transaction_detail_name_${index + 1}`]: {
-      type: PatchType.PARAGRAPH,
-      children: [new TextRun(details[index]?.name)],
-    }
-  }))
+  const detailsDocs = [
+    ...details.map((detail, index) => ({
+      [`transaction_detail_name_${index + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(detail.name)],
+      },
+      [`transaction_detail_amount_${index + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(detail.amount)],
+      },
+    })),
+    ...new Array(20 - details.length).fill(0).map((_, index) => ({
+      [`transaction_detail_name_${index + details.length + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun("")],
+      },
+      [`transaction_detail_amount_${index + details.length + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun("")],
+      },
+    }))
+  ]
+  const detailsPatch = Object.assign({}, ...detailsDocs)
+
+  console.log('detailsDocs', detailsDocs, detailsPatch)
 
   await patchDocument(fs.readFileSync("docs/SPK.docx"), {
     patches: {
@@ -89,6 +108,7 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(terbilang(transaction.duration))],
       },
+      ...detailsPatch,
     }
   }).then((doc) => {
     fs.writeFileSync("public/spk.docx", doc);

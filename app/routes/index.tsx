@@ -1,32 +1,4 @@
 import { Link } from "@remix-run/react";
-import * as fs from "fs";
-import {
-  ExternalHyperlink,
-  HeadingLevel,
-  ImageRun,
-  Paragraph,
-  patchDocument,
-  PatchType,
-  Table,
-  TableCell,
-  TableRow,
-  TextDirection,
-  TextRun,
-  VerticalAlign,
-} from "docx";
-
-export async function loader() {
-  await patchDocument(fs.readFileSync("docs/SPK-test.docx"), {
-    patches: {
-    }
-  }).then((doc) => {
-    fs.writeFileSync("public/test.docx", doc);
-  });
-
-  return {
-    message: "Hello World!",
-  };
-}
 
 export default function Index() {
   const dataInput = [

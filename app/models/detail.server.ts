@@ -23,6 +23,13 @@ export function getDetailListItems({ transactionId }: { transactionId: Transacti
   });
 }
 
+export function getDetails({ transactionId }: { transactionId: Transaction["id"] }) {
+  return prisma.detail.findMany({
+    where: { transactionId },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
 export function createDetail({
   name,
   amount,
