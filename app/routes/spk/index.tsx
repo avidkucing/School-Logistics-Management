@@ -16,7 +16,8 @@ import {
   TextRun,
   patchDocument,
 } from "docx";
-import { getDetailListItems, getDetails } from "~/models/detail.server";
+import { getDetails } from "~/models/detail.server";
+import { getSupplier } from "~/models/supplier.server";
 
 export const forms: FormType[] = [
   { name: "transactionId", type: "select", required: true, label: "Pilih Transaksi" },
@@ -63,10 +64,17 @@ export async function action({ request }: ActionArgs) {
     throw new Response("school not found", { status: 404 });
   }
 
+  const supplier = await getSupplier({ userId, id: transaction.supplierId });
+  if (!supplier) {
+    throw new Response("supplier not found", { status: 404 });
+  }
+
   const details = await getDetails({ transactionId });
   if (!details) {
     throw new Response("details not found", { status: 404 });
   }
+
+  const transaction_detail_total_total = details.reduce((acc, detail) => acc + (parseInt(detail.total) || 0), 0)
 
   const detailsDocs = [
     ...details.map((detail, index) => ({
@@ -78,6 +86,18 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(detail.amount)],
       },
+      [`transaction_detail_unit_${index + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(detail.unit)],
+      },
+      [`transaction_detail_unit_price_${index + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(detail.unit_price)],
+      },
+      [`transaction_detail_total_${index + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(detail.total)],
+      },
     })),
     ...new Array(20 - details.length).fill(0).map((_, index) => ({
       [`transaction_detail_name_${index + details.length + 1}`]: {
@@ -88,17 +108,31 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun("")],
       },
+      [`transaction_detail_unit_${index + details.length + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun("")],
+      },
+      [`transaction_detail_unit_price_${index + details.length + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun("")],
+      },
+      [`transaction_detail_total_${index + details.length + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun("")],
+      },
     }))
   ]
   const detailsPatch = Object.assign({}, ...detailsDocs)
-
-  console.log('detailsDocs', detailsDocs, detailsPatch)
 
   await patchDocument(fs.readFileSync("docs/SPK.docx"), {
     patches: {
       transaction_spk_no: {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(transaction.spk_no)],
+      },
+      transaction_spk_date: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.spk_date)],
       },
       transaction_duration: {
         type: PatchType.PARAGRAPH,
@@ -108,10 +142,38 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(terbilang(transaction.duration))],
       },
+      transaction_date_start: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.date_start)],
+      },
+      transaction_date_end: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.date_end)],
+      },
+      supplier_leader_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(supplier.leader_name)],
+      },
+      school_head_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(school.head_name)],
+      },
+      school_head_no: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(school.head_no)],
+      },
+      transaction_detail_total_total: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction_detail_total_total + '')],
+      },
+      transaction_detail_total_total_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(terbilang(transaction_detail_total_total))],
+      },
       ...detailsPatch,
     }
   }).then((doc) => {
-    fs.writeFileSync("public/spk.docx", doc);
+    fs.writeFileSync("public/SPK.docx", doc);
   });
 
   return redirect(`/spk/download`);
