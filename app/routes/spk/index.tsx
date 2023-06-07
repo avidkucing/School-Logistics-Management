@@ -170,6 +170,18 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(terbilang(transaction_detail_total_total))],
       },
+      transaction_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.name)],
+      },
+      transaction_code: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.code)],
+      },
+      transaction_date: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.date)],
+      },
       ...detailsPatch,
     }
   }).then((doc) => {
