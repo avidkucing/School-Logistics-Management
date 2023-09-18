@@ -185,7 +185,7 @@ export async function action({ request }: ActionArgs) {
       ...detailsPatch,
     }
   }).then((doc) => {
-    fs.writeFileSync("public/SPK.docx", doc);
+    fs.writeFileSync("spk.docx", doc);
   });
 
   return redirect(`/spk/download`);
