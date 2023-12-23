@@ -23,6 +23,18 @@ export default function Index() {
     {
       id: 'spk', title: "Cetak SPK"
     },
+    {
+      id: 'spp', title: "Cetak SPP"
+    },
+    {
+      id: 'lbk', title: "Cetak Lampiran Belanja Komputer"
+    },
+    {
+      id: 'bapf', title: "Cetak BA Pemeriksaan Fisik"
+    },
+    {
+      id: 'basthp', title: "Cetak BA Serah Terima Hasil Pekerjaan"
+    },
   ]
 
   return (

@@ -9,7 +9,7 @@ import { getSchool, getSchoolListItems } from "~/models/school.server";
 import { getTransaction, getTransactionListItems } from "~/models/transaction.server";
 import { requireUserId } from "~/session.server";
 import type { FormType } from "~/types";
-import { getFormData, injectOptions, terbilang } from "~/utils";
+import { getFormData, injectOptions } from "~/utils";
 import * as fs from "fs";
 import {
   PatchType,
@@ -74,8 +74,6 @@ export async function action({ request }: ActionArgs) {
     throw new Response("details not found", { status: 404 });
   }
 
-  const transaction_detail_total_total = details.reduce((acc, detail) => acc + (parseInt(detail.total) || 0), 0)
-
   const detailsDocs = [
     ...details.map((detail, index) => ({
       [`transaction_detail_name_${index + 1}`]: {
@@ -90,13 +88,9 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(detail.unit)],
       },
-      [`transaction_detail_unit_price_${index + 1}`]: {
+      [`transaction_detail_notes_${index + 1}`]: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(detail.unit_price)],
-      },
-      [`transaction_detail_total_${index + 1}`]: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(detail.total)],
+        children: [new TextRun(detail.notes)],
       },
     })),
     ...new Array(20 - details.length).fill(0).map((_, index) => ({
@@ -112,11 +106,7 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun("")],
       },
-      [`transaction_detail_unit_price_${index + details.length + 1}`]: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun("")],
-      },
-      [`transaction_detail_total_${index + details.length + 1}`]: {
+      [`transaction_detail_notes_${index + 1}`]: {
         type: PatchType.PARAGRAPH,
         children: [new TextRun("")],
       },
@@ -124,31 +114,15 @@ export async function action({ request }: ActionArgs) {
   ]
   const detailsPatch = Object.assign({}, ...detailsDocs)
 
-  await patchDocument(fs.readFileSync("docs/SPK.docx"), {
+  await patchDocument(fs.readFileSync("docs/BASTHP.docx"), {
     patches: {
-      transaction_spk_no: {
+      supplier_name: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.spk_no)],
+        children: [new TextRun(supplier.name)],
       },
-      transaction_spk_date: {
+      supplier_address: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.spk_date)],
-      },
-      transaction_duration: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.duration)],
-      },
-      transaction_duration_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(terbilang(transaction.duration))],
-      },
-      transaction_date_start: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date_start)],
-      },
-      transaction_date_end: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date_end)],
+        children: [new TextRun(supplier.address)],
       },
       supplier_leader_name: {
         type: PatchType.PARAGRAPH,
@@ -162,33 +136,13 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(school.head_no)],
       },
-      transaction_detail_total_total: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction_detail_total_total + '')],
-      },
-      transaction_detail_total_total_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(terbilang(transaction_detail_total_total))],
-      },
-      transaction_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.name)],
-      },
-      transaction_code: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.code)],
-      },
-      transaction_date: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date)],
-      },
       ...detailsPatch,
     }
   }).then((doc) => {
-    fs.writeFileSync("public/spk.docx", doc);
+    fs.writeFileSync("public/basthp.docx", doc);
   });
 
-  return redirect(`/spk/download`);
+  return redirect(`/basthp/download`);
 }
 
 export default function NewNotePage() {

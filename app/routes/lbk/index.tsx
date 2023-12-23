@@ -82,6 +82,10 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(detail.name)],
       },
+      [`transaction_detail_spec_${index + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(detail.spec)],
+      },
       [`transaction_detail_amount_${index + 1}`]: {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(detail.amount)],
@@ -101,6 +105,10 @@ export async function action({ request }: ActionArgs) {
     })),
     ...new Array(20 - details.length).fill(0).map((_, index) => ({
       [`transaction_detail_name_${index + details.length + 1}`]: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun("")],
+      },
+      [`transaction_detail_spec_${index + details.length + 1}`]: {
         type: PatchType.PARAGRAPH,
         children: [new TextRun("")],
       },
@@ -124,32 +132,8 @@ export async function action({ request }: ActionArgs) {
   ]
   const detailsPatch = Object.assign({}, ...detailsDocs)
 
-  await patchDocument(fs.readFileSync("docs/SPK.docx"), {
+  await patchDocument(fs.readFileSync("docs/LBK.docx"), {
     patches: {
-      transaction_spk_no: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.spk_no)],
-      },
-      transaction_spk_date: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.spk_date)],
-      },
-      transaction_duration: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.duration)],
-      },
-      transaction_duration_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(terbilang(transaction.duration))],
-      },
-      transaction_date_start: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date_start)],
-      },
-      transaction_date_end: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date_end)],
-      },
       supplier_leader_name: {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(supplier.leader_name)],
@@ -178,17 +162,13 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(transaction.code)],
       },
-      transaction_date: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date)],
-      },
       ...detailsPatch,
     }
   }).then((doc) => {
-    fs.writeFileSync("public/spk.docx", doc);
+    fs.writeFileSync("public/lbk.docx", doc);
   });
 
-  return redirect(`/spk/download`);
+  return redirect(`/lbk/download`);
 }
 
 export default function NewNotePage() {

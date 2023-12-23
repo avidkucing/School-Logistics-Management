@@ -124,7 +124,7 @@ export async function action({ request }: ActionArgs) {
   ]
   const detailsPatch = Object.assign({}, ...detailsDocs)
 
-  await patchDocument(fs.readFileSync("docs/SPK.docx"), {
+  await patchDocument(fs.readFileSync("docs/BKPK.docx"), {
     patches: {
       transaction_spk_no: {
         type: PatchType.PARAGRAPH,
@@ -185,10 +185,10 @@ export async function action({ request }: ActionArgs) {
       ...detailsPatch,
     }
   }).then((doc) => {
-    fs.writeFileSync("public/spk.docx", doc);
+    fs.writeFileSync("public/bkpk.docx", doc);
   });
 
-  return redirect(`/spk/download`);
+  return redirect(`/bkpk/download`);
 }
 
 export default function NewNotePage() {

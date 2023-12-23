@@ -124,8 +124,52 @@ export async function action({ request }: ActionArgs) {
   ]
   const detailsPatch = Object.assign({}, ...detailsDocs)
 
-  await patchDocument(fs.readFileSync("docs/SPK.docx"), {
+  await patchDocument(fs.readFileSync("docs/SPP.docx"), {
     patches: {
+      supplier_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(supplier.name)],
+      },
+      supplier_address: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(supplier.address)],
+      },
+      supplier_leader_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(supplier.leader_name)],
+      },
+      school_head_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(school.head_name)],
+      },
+      school_head_no: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(school.head_no)],
+      },
+      school_address: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(school.address)],
+      },
+      transaction_detail_total_total: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction_detail_total_total + '')],
+      },
+      transaction_detail_total_total_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(terbilang(transaction_detail_total_total))],
+      },
+      transaction_name: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.name)],
+      },
+      transaction_code: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.code)],
+      },
+      transaction_date: {
+        type: PatchType.PARAGRAPH,
+        children: [new TextRun(transaction.date)],
+      },
       transaction_spk_no: {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(transaction.spk_no)],
@@ -150,45 +194,13 @@ export async function action({ request }: ActionArgs) {
         type: PatchType.PARAGRAPH,
         children: [new TextRun(transaction.date_end)],
       },
-      supplier_leader_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(supplier.leader_name)],
-      },
-      school_head_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(school.head_name)],
-      },
-      school_head_no: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(school.head_no)],
-      },
-      transaction_detail_total_total: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction_detail_total_total + '')],
-      },
-      transaction_detail_total_total_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(terbilang(transaction_detail_total_total))],
-      },
-      transaction_name: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.name)],
-      },
-      transaction_code: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.code)],
-      },
-      transaction_date: {
-        type: PatchType.PARAGRAPH,
-        children: [new TextRun(transaction.date)],
-      },
       ...detailsPatch,
     }
   }).then((doc) => {
-    fs.writeFileSync("public/spk.docx", doc);
+    fs.writeFileSync("public/spp.docx", doc);
   });
 
-  return redirect(`/spk/download`);
+  return redirect(`/spp/download`);
 }
 
 export default function NewNotePage() {
